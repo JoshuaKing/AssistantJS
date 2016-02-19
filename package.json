@@ -10,7 +10,8 @@
     "fs-extra": "0.26.5",
     "run-sequence": "^1.1.4",
     "selenium-standalone": "4.7.0",
-    "webdriverio": "3.2.4"
+    "webdriverio": "3.2.4",
+    "prompt-sync": "latest"
   },
   "private": true
 }
