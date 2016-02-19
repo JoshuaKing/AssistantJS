@@ -1,2 +1,2 @@
-aes.json
-.idea
+**/aes.json
+/.idea/**
