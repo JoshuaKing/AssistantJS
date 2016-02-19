@@ -1,0 +1,16 @@
+{
+  "name": "assistant",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node src/app/assistant.js"
+  },
+  "dependencies": {
+    "phantomjs": "^1.9.18",
+    "fs-extra": "0.26.5",
+    "run-sequence": "^1.1.4",
+    "selenium-standalone": "4.7.0",
+    "webdriverio": "3.2.4"
+  },
+  "private": true
+}
