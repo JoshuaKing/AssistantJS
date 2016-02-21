@@ -31,7 +31,7 @@ function exitPhantom() {
 
 page.open('https://online.westpac.com.au/esis/Login/SrvPage', function(status) {
     page.onLoadFinished = function(status) {
-        console.log("Load Finished: " + status + "  " + page.url + "\nCONTENT: " + page.content);
+        console.log("Load Finished: " + page.url + "\nCONTENT: " + page.content);
     };
     page.evaluate(function(user, pass) {
         console.log("Site: " + window.location.href);
