@@ -1,1 +1,19 @@
-{"home":"","work":"","name":"AtSTHCyyAC23ZIBmDbdmDQ==","dob":""}
+{
+  "home": "",
+  "work": "",
+  "name": "arrfvPmsbpLTXDJ47qTOCg==",
+  "dob": "",
+  "zombie": {
+    "userAgent": {
+      "mobile": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.76 Mobile Safari/537.36",
+      "desktop": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.103 Safari/537.36"
+    }
+  },
+  "modules": {
+    "westpac": {
+      "name": "Westpac",
+      "username": "tu3VrSG8rvhSO+gehyXWkw==",
+      "password": "VQfJoxZSaAfpAgvPnmf2rg=="
+    }
+  }
+}

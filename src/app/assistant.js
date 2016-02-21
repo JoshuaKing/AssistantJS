@@ -1,33 +1,46 @@
-var crypto = require('crypto');
 var process = require('process');
-var prompt = require('prompt-sync').prompt;
+var JsonFormatter = require('format-json');
 var fs = require("fs-extra");
+var prompt = require('prompt-sync').prompt;
+var Crypt = require(process.cwd() + '/src/app/crypt.js');
 var childProcess = require('child_process');
-var phantomjs = require('phantomjs');
+var phantomjs = require('phantomjs-prebuilt');
 
 var config = require(process.cwd() + "/config/configuration.json");
 var key = require(process.cwd() + "/config/aes.json").key;
 
 console.log("AssistantJS");
 
-function decrypt(encrypted) {
-    var decipher = crypto.createDecipher("aes256", key);
-    decipher.update(encrypted, 'base64', 'utf8');
-    return decipher.final('utf8');
+Crypt.init(key);
+
+function loadModules() {
+    var dir = process.cwd() + "/src/modules/";
+    var modules = fs.readdirSync(process.cwd() + "/src/modules/");
+    for (i = 0; i < modules.length; i++) {
+        module = modules[i];
+        if (module.indexOf(".ignore") != -1) continue;
+        var child = childProcess.execFile(phantomjs.path, [dir + module, process.cwd(), Crypt.decrypt(config.modules.westpac.username), Crypt.decrypt(config.modules.westpac.password)], {cwd: process.cwd()});
+        child.stdout.on('data', function(data) {
+            console.log(data);
+        });
+        child.stderr.on('data', function(data) {
+            console.log(data);
+        });
+        console.log("Loaded " + module.replace(/\..{2,4}$/, ""));
+    };
 }
 
-function encrypt(plaintext) {
-    var cipher = crypto.createCipher("aes256", key);
-    cipher.update(plaintext);
-    return cipher.final('base64');
-}
+/*childProcess.execFile(phantomjs.path, [process.cwd() + "/src/scripts/phantomjs-westpac.js", "test"], function(err, stdin, stdout) {
+    console.log("Child Phantom Finished");
+    console.log(stdout);
+});*/
 
-childProcess.execFile(phantomjs.path, [process.cwd() + "/src/scripts/phantomjs-westpac.js", "test"]);
-
-console.log("Old Name: " + decrypt(config.name));
+console.log("Old Name: " + config.modules.westpac.password);
 console.log("New Name?");
-config.name = encrypt(prompt());
+//config.modules.westpac.password = Crypt.encrypt(prompt());
 
-console.log(JSON.stringify(config));
-fs.writeFile(process.cwd() + "/config/configuration.json", JSON.stringify(config));
 
+loadModules();
+
+
+//fs.writeFile(process.cwd() + "/config/configuration.json", JsonFormatter.plain(config));

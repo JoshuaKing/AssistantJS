@@ -6,12 +6,16 @@
     "start": "node src/app/assistant.js"
   },
   "dependencies": {
-    "phantomjs": "latest",
+    "phantomjs-prebuilt": "latest",
     "fs-extra": "latest",
     "run-sequence": "^1.1.4",
     "selenium-standalone": "4.7.0",
     "webdriverio": "3.2.4",
-    "prompt-sync": "latest"
+    "prompt-sync": "latest",
+    "process": "latest",
+    "zombie": "latest",
+    "format-json": "latest",
+    "nock": "latest"
   },
   "private": true
 }

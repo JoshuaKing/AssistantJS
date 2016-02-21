@@ -1,0 +1,93 @@
+var process = require('process');
+var Crypt = require(process.cwd() + '/src/app/crypt.js');
+var nock = require('nock');
+/*nock('https://online.westpac.com.au')
+    .filteringRequestBody(/.*/, '*')
+    .get('/esis/Login/SrvPage')
+    .reply(200, function(uri, resp) { return resp; })
+    .get('/esis/furniture/v2.23/scripts/safi.js')
+    .reply(200, {});*/
+var Browser = require('zombie');
+var config = {};
+
+function lookup(c) {
+    if (c >= '0' && c <= '9')
+        return c.charCodeAt(0);
+    else
+        return c.charCodeAt(0) - 32;
+}
+
+Browser.prototype.keyUp = function(targetSelector, char, callback) {
+  var event = this.window.document.createEvent('HTMLEvents');
+  event.initEvent('keyup', true, true);
+  event.which = lookup(char);
+  event.keyCode = lookup(char);
+  var target = this.window.document.querySelector(targetSelector);
+  target && target.dispatchEvent(event);
+  return this._wait(null, callback);
+};
+
+Browser.prototype.keyDown = function(targetSelector, char, callback) {
+  var event = this.window.document.createEvent('HTMLEvents');
+  event.initEvent('keyDown', true, true);
+  event.which = lookup(char);
+  event.keyCode = lookup(char);
+  var target = this.window.document.querySelector(targetSelector);
+  target && target.dispatchEvent(event);
+  return this._wait(null, callback);
+};
+
+Browser.prototype.keyPress = function(targetSelector, text) {
+    var field = browser.field(targetSelector);
+    if (text.length == 0) {
+        return field.value;
+    }
+    field.focus()
+    var value = text.charAt(0);
+    console.log(field.value + value);
+    browser.fill(targetSelector, field.value + value);
+    return browser.keyDown(targetSelector, value)
+    .then(function() {return browser.keyUp(targetSelector, value)})
+    .then(function() { return browser.keyPress(targetSelector, text.substr(1))});
+}
+
+function load(configuration, moduleconf) {
+    config = configuration;
+    console.log("Thanks " + Crypt.decrypt(config.name));
+
+    //browser = new Browser({userAgent: config.zombie.userAgent.mobile, debug: true, waitFor: 10000})
+
+    browser = new Browser({userAgent: config.zombie.userAgent.desktop, debug: true, waitFor: 10000})
+    browser.site = "https://online.westpac.com.au";
+    /*browser.visit("/esis/Login/SrvPage?app=mobile").then(function() {
+        console.log(browser.location.href);
+        browser.fill("uName", Crypt.decrypt(moduleconf.username));
+        browser.focus("pwd");
+        var p = Crypt.decrypt(moduleconf.password);
+        browser.keyPress("pwd", p.substr(0, 6)).then(function() {
+            console.log(p + " = " + browser.document.getElementById("password").value);
+            return browser.click("#signin").then(function() {
+                setTimeout(function() {
+                    console.log(browser.html());
+                    console.log(browser.location.href);
+                }, 1500);
+            });
+        });
+    });*/
+    browser.visit("/esis/Login/SrvPage").then(function() {
+        console.log(browser.html());
+        console.log(browser.location.href);
+        browser.fill("username_temp", Crypt.decrypt(moduleconf.username));
+        /*var recurse = function(pass) {
+            var p = pass.charAt(0);
+            console.log("p " + p);
+            var f = this;
+            browser.query("keypad_0_kp" + p.toUpperCase()).click(function() {
+                return f(pass.substr(1));
+            })
+        };
+        recurse(Crypt.decrypt(moduleconf.password));*/
+    });
+}
+
+module.exports = {load: load};

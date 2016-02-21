@@ -1,3 +1,6 @@
 **/aes.json
 /.idea/**
 /node_modules/**
+/npm-debug.log
+.DS_Store
+/ph.png
