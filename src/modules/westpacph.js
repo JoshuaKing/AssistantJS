@@ -38,7 +38,7 @@ page.open('https://online.westpac.com.au/esis/Login/SrvPage', function(status) {
                 $(".account-info").each(function(i, div) {
                     var balance = $(div).next().find("dd.CurrentBalance").contents().eq(0).text();
                     var account = $(div).find("h2").text();
-                    accounts.push({name: account.trim(), balance: balance});
+                    accounts.push({name: account.trim(), balance: balance.trim()});
                 });
                 return accounts;
             });
