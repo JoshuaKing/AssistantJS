@@ -42,10 +42,11 @@ function login(user, pass) {
 
 function getAccounts() {
     var accounts = [];
-    $(".account-info").each(function(i, div) {
-        var balance = $(div).next().find("dd.CurrentBalance").contents().eq(0).text();
-        var account = $(div).find("h2").text();
-        accounts.push({name: account.trim(), balance: balance.trim()});
+    $(".account-tile").each(function(i, div) {
+        var balance = $(div).find(".balance dd.CurrentBalance").contents().eq(0).text();
+        var account = $(div).find(".account-info h2").text();
+        var type = $(div).parent().attr("data-analytics-productgroupname");
+        accounts.push({name: account.trim(), balance: balance.trim(), type: type.trim()});
     });
     return accounts;
 }
@@ -56,10 +57,19 @@ page.open('https://online.westpac.com.au/esis/Login/SrvPage', function() {
             console.log("Logged In Successfully");
             var accounts = page.evaluate(getAccounts);
             accounts.forEach(function(acc) {
-                console.log("account: " + acc.name + "=" + acc.balance);
+                console.log("account: " + acc.name + "=" + acc.balance + ", " + acc.type);
             })
         }
     };
-    page.evaluate(login, user, pass);
+    page.evaluate(function(user, pass) {
+        console.log("Site: " + window.location.href);
+        jQuery.ajaxSetup({async: false});
+        $("#username_temp").val(user);
+        for (i = 0; i < pass.length; i++) {
+            var p = pass.charAt(i).toUpperCase();
+            $("#keypad_0_kp" + p).click();
+        }
+        $("#btn-submit").click();
+    }, user, pass);
     idleTimeout = setTimeout(exitPhantom, 3000);
 });
