@@ -29,35 +29,37 @@ function exitPhantom() {
     phantom.exit();
 }
 
-page.open('https://online.westpac.com.au/esis/Login/SrvPage', function(status) {
-    page.onLoadFinished = function(status) {
+function login(user, pass) {
+    console.log("Site: " + window.location.href);
+    jQuery.ajaxSetup({async: false});
+    $("#username_temp").val(user);
+    for (i = 0; i < pass.length; i++) {
+        var p = pass.charAt(i).toUpperCase();
+        $("#keypad_0_kp" + p).click();
+    }
+    $("#btn-submit").click();
+}
+
+function getAccounts() {
+    var accounts = [];
+    $(".account-info").each(function(i, div) {
+        var balance = $(div).next().find("dd.CurrentBalance").contents().eq(0).text();
+        var account = $(div).find("h2").text();
+        accounts.push({name: account.trim(), balance: balance.trim()});
+    });
+    return accounts;
+}
+
+page.open('https://online.westpac.com.au/esis/Login/SrvPage', function() {
+    page.onLoadFinished = function() {
         if (page.url == "https://banking.westpac.com.au/secure/banking/overview/dashboard") {
             console.log("Logged In Successfully");
-            var accounts = page.evaluate(function() {
-                var accounts = [];
-                $(".account-info").each(function(i, div) {
-                    var balance = $(div).next().find("dd.CurrentBalance").contents().eq(0).text();
-                    var account = $(div).find("h2").text();
-                    accounts.push({name: account.trim(), balance: balance.trim()});
-                });
-                return accounts;
-            });
+            var accounts = page.evaluate(getAccounts);
             accounts.forEach(function(acc) {
                 console.log("account: " + acc.name + "=" + acc.balance);
             })
-        } else {
-            console.log("Load Finished: " + page.url + "\nCONTENT: " + page.content);
         }
     };
-    page.evaluate(function(user, pass) {
-        console.log("Site: " + window.location.href);
-        jQuery.ajaxSetup({async: false});
-        $("#username_temp").val(user);
-        for (i = 0; i < pass.length; i++) {
-            var p = pass.charAt(i).toUpperCase();
-            $("#keypad_0_kp" + p).click();
-        }
-        $("#btn-submit").click();
-    }, user, pass);
+    page.evaluate(login, user, pass);
     idleTimeout = setTimeout(exitPhantom, 3000);
 });
