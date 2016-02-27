@@ -16,26 +16,31 @@ Crypt.init(key);
 function loadModules() {
     var dir = process.cwd() + "/src/modules/";
     var modules = fs.readdirSync(process.cwd() + "/src/modules/");
-    for (i = 0; i < modules.length; i++) {
-        module = modules[i];
-        if (module.indexOf(".ignore") != -1) continue;
-        var child = childProcess.execFile(phantomjs.path, [dir + module, process.cwd(), Crypt.decrypt(config.modules.westpac.username), Crypt.decrypt(config.modules.westpac.password)], {cwd: process.cwd()});
+
+    modules.forEach(function(module) {
+        if (module.indexOf(".ignore") != -1) return;
+
+        var name = module.replace(/\..{2,4}$/, "");
+        var configJson = JSON.stringify(config);
+        var configModule = config.modules[name];
+        for (enc in configModule.encrypted) {
+            configModule.encrypted[enc] = Crypt.decrypt(configModule.encrypted[enc]);
+        }
+        configModule = JSON.stringify(configModule);
+
+
+        var child = childProcess.execFile(phantomjs.path, [dir + module, process.cwd(), configJson, configModule], {cwd: process.cwd()});
         child.stdout.on('data', function(data) {
-            console.log(data);
+            console.log(name + ": " + data);
         });
         child.stderr.on('data', function(data) {
-            console.log(data);
+            console.log(name + ": err: " + data);
         });
-        console.log("Loaded " + module.replace(/\..{2,4}$/, ""));
-    };
+        console.log("Loaded " + name);
+    });;
 }
 
-/*childProcess.execFile(phantomjs.path, [process.cwd() + "/src/scripts/phantomjs-westpac.js", "test"], function(err, stdin, stdout) {
-    console.log("Child Phantom Finished");
-    console.log(stdout);
-});*/
-
-console.log("Old Name: " + config.modules.westpac.password);
+console.log("Old Name: " + config.modules.westpacph.name);
 console.log("New Name?");
 //config.modules.westpac.password = Crypt.encrypt(prompt());
 

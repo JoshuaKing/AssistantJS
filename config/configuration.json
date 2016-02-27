@@ -10,10 +10,12 @@
     }
   },
   "modules": {
-    "westpac": {
-      "name": "Westpac",
-      "username": "tu3VrSG8rvhSO+gehyXWkw==",
-      "password": "VQfJoxZSaAfpAgvPnmf2rg=="
+    "westpacph": {
+      "encrypted": {
+        "username": "tu3VrSG8rvhSO+gehyXWkw==",
+        "password": "VQfJoxZSaAfpAgvPnmf2rg=="
+      },
+      "every": 10
     }
   }
 }
