@@ -18,9 +18,10 @@ function loadModules() {
     var modules = fs.readdirSync(process.cwd() + "/src/modules/");
 
     modules.forEach(function(module) {
-        if (module.indexOf(".ignore") != -1) return;
-
+        if (module.match(/\.ignore|[^.][^j][^s]$/)) return;
         var name = module.replace(/\..{2,4}$/, "");
+        console.log("Loading " + name);
+
         var configJson = JSON.stringify(config);
         var configModule = config.modules[name];
         for (enc in configModule.encrypted) {
@@ -39,7 +40,6 @@ function loadModules() {
         child.stderr.on('data', function(data) {
             console.log(name + ": err: " + data);
         });
-        console.log("Loaded " + name);
     });
 }
 

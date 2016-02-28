@@ -122,9 +122,42 @@ function logNetworth(accounts) {
             networth += acc.balance;
         }
     }
-    console.log("Networth: " + networth);
     var networthStr = Date.now() + " " + new Date().toISOString() + " " + networth + "\n";
     if (fs.makeTree(logdir)) fs.write(logdir + "networth.log", networthStr, "w+");
+
+    console.log("Generating Google Chart of Networth");
+    resetTimer();
+    var cols =
+        [{
+            label: "Time",
+            type: "datetime",
+            id: "time"
+         },
+         {
+            label: "Networth",
+            type: "number",
+            id: "networth"
+         }];
+
+    var logFile = fs.open(logdir + "networth.log", "r");
+    var data = "";
+    while (!logFile.atEnd()) {
+        var line = logFile.readLine().split(" ");
+        data += ", [{v: new Date(" + line[0] + "), f: '" + line[1] + "'}, " + line[2] + "]";
+    }
+    logFile.close();
+
+    fs.remove(logdir + "networth.json");
+    fs.remove(logdir + "networth.html");
+
+    var dataFile = fs.open(logdir + "networth.json", 'w');
+    dataFile.writeLine("var jsonData = [" + JSON.stringify(cols) + data + "];");
+    dataFile.close();
+
+    fs.copy(cwd + "/src/modules/westpacph-networth.html", logdir + "networth.html");
+    resetTimer();
+
+    console.log("Generated.");
 }
 
 function handleDashboard() {
