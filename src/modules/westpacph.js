@@ -127,8 +127,7 @@ function logNetworth(accounts) {
 
     console.log("Generating Google Chart of Networth");
     resetTimer();
-    var cols =
-        [{
+    var cols = [ {
             label: "Time",
             type: "datetime",
             id: "time"
@@ -137,10 +136,11 @@ function logNetworth(accounts) {
             label: "Networth",
             type: "number",
             id: "networth"
-         }];
+         }
+    ];
 
     var logFile = fs.open(logdir + "networth.log", "r");
-    var data = "";
+    var data = JSON.stringify(cols);
     while (!logFile.atEnd()) {
         var line = logFile.readLine().split(" ");
         data += ", [{v: new Date(" + line[0] + "), f: '" + line[1] + "'}, " + line[2] + "]";
@@ -150,9 +150,7 @@ function logNetworth(accounts) {
     fs.remove(logdir + "networth.json");
     fs.remove(logdir + "networth.html");
 
-    var dataFile = fs.open(logdir + "networth.json", 'w');
-    dataFile.writeLine("var jsonData = [" + JSON.stringify(cols) + data + "];");
-    dataFile.close();
+    fs.write(logdir + "networth.json", "var jsonData = [" + data + "];", 'w');
 
     fs.copy(cwd + "/src/modules/westpacph-networth.html", logdir + "networth.html");
     resetTimer();
