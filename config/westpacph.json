@@ -1,4 +1,9 @@
 {
+  "log": {
+    "dir": "/log/westpacph/",
+    "screenshot": true,
+    "html": true
+  },
   "networth": [ 50, 14, 1 ],
   "account-1": {
     "min": 150,

@@ -27,9 +27,12 @@ function loadModules() {
             configModule.encrypted[enc] = Crypt.decrypt(configModule.encrypted[enc]);
         }
         configModule = JSON.stringify(configModule);
+        var args = [dir + module, process.cwd(), configJson, configModule];
 
+        //var execStr = phantomjs.path + " '" + args.join("' '") + "'\n";
+        //fs.outputFileSync(process.cwd() + "/log/modules/cmdline.log", execStr);
 
-        var child = childProcess.execFile(phantomjs.path, [dir + module, process.cwd(), configJson, configModule], {cwd: process.cwd()});
+        var child = childProcess.execFile(phantomjs.path, args, {cwd: process.cwd()});
         child.stdout.on('data', function(data) {
             console.log(name + ": " + data);
         });
@@ -37,7 +40,7 @@ function loadModules() {
             console.log(name + ": err: " + data);
         });
         console.log("Loaded " + name);
-    });;
+    });
 }
 
 console.log("Old Name: " + config.modules.westpacph.name);
