@@ -15,6 +15,7 @@ Crypt.init(key);
 
 function loadModule(module) {
     var name = module.replace(/\..{2,4}$/, "");
+    var dir = process.cwd() + "/src/modules/";
     console.log("Loading " + name);
 
     var configJson = JSON.stringify(config);
@@ -38,7 +39,6 @@ function loadModule(module) {
 }
 
 function loadModules() {
-    var dir = process.cwd() + "/src/modules/";
     var modules = fs.readdirSync(process.cwd() + "/src/modules/");
 
     modules.forEach(function(module) {
