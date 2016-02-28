@@ -43,6 +43,7 @@ function loadModules() {
 
     modules.forEach(function(module) {
         if (module.match(/\.ignore|[^.][^j][^s]$/)) return;
+        var name = module.replace(/\..{2,4}$/, "");
         var configModule = config.modules[name];
         loadModule(module);
         if (typeof configModule.every != 'undefined') setInterval(loadModule, configModule.every * 1000, module);
