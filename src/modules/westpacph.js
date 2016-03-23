@@ -67,6 +67,7 @@ function injectGetAccounts() {
             hashcode: hashcode
         });
     });
+    console.log(JSON.stringify(accounts));
     return accounts;
 }
 
@@ -77,7 +78,8 @@ function transferAccount(accountIndex, accounts) {
     }
     var toAccount = accounts[accountIndex];
     var settings = accountConfig["account-" + toAccount.hashcode];
-    if (typeof settings == "undefined") return transfer(accountIndex + 1, accounts);
+    if (typeof(settings) == "undefined") return;
+    console.log("Checking account " + JSON.stringify(accounts[accountIndex].name));
     if (toAccount.balance >= settings.min) return;
 
     var fromAccount = toAccount;
@@ -87,6 +89,9 @@ function transferAccount(accountIndex, accounts) {
             break;
         }
     }
+    console.log("Initiating transfer: $" + settings.topup + " from " + fromAccount.name + " to " + toAccount.name);
+    if (fromAccount == toAccount) return;
+
     page.onLoadFinished = function(){};
     page.open('https://banking.westpac.com.au/secure/banking/overview/payments/transfers', function() {
         page.onLoadFinished = function() {
@@ -153,7 +158,7 @@ function logNetworth(accounts) {
     fs.write(logdir + "networth.json", "var jsonData = [" + data + "];", 'w');
 
     fs.copy(cwd + "/src/modules/westpacph-networth.html", logdir + "networth.html");
-    resetTimer();
+    0
 
     console.log("Generated.");
 }
@@ -163,7 +168,12 @@ function handleDashboard() {
         console.log("Logged In Successfully");
         var accounts = page.evaluate(injectGetAccounts);
         logNetworth(accounts);
-        transferAccount(0, accounts);
+        console.log("Loaded " + accounts.length + " accounts.");
+        for (var i = 0; i < accounts.length; i++) {
+            transferAccount(i, accounts);
+            resetTimer();
+        }
+        console.log("Completed.");
     }
 };
 

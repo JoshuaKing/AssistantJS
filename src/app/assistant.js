@@ -19,7 +19,7 @@ function loadModule(module) {
     console.log("Loading " + name);
 
     var configJson = JSON.stringify(config);
-    var configModule = config.modules[name];
+    var configModule = JSON.parse(JSON.stringify(config.modules[name]));;
     for (enc in configModule.encrypted) {
         configModule.encrypted[enc] = Crypt.decrypt(configModule.encrypted[enc]);
     }
